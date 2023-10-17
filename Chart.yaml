@@ -1,0 +1,15 @@
+apiVersion: v2
+name: elixir-phoenix
+description: A Helm chart for phoenix applications
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+maintainers:
+  - name: mrdotb
+    url: https://github.com/mrdotb
+dependencies:
+  - name: postgresql
+    alias: postgresql
+    version: 13.1.5
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
