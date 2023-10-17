@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "elixir-phoenix.fullname" . }}
+  labels:
+    {{- include "elixir-phoenix.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  activeDeadlineSeconds: 3600
+  backoffLimit: 8
+  template:
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/app/bin/migrate"]
+        env:
+          envFrom:
+            - secretRef:
+                name: {{ include "elixir-phoenix.fullname" . }}
+      restartPolicy: OnFailure
